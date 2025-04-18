@@ -1,24 +1,26 @@
 import * as React from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
+import { useEffect, useState } from "react";
+
+import getUserData from "@/lib/user";
 
 const columns = [
-  { field: "id", headerName: "ID", width: 70 },
-  { field: "firstName", headerName: "First name", width: 130 },
-  { field: "lastName", headerName: "Last name", width: 130 },
+  { field: "id", headerName: "ID", flex: 1 },
+  { field: "fullName", headerName: "Name", flex: 1 },
+  { field: "occupation", headerName: "Occupation", flex: 1 },
+  { field: "status", headerName: "Status", flex: 1 },
   {
-    field: "age",
-    headerName: "Age",
+    field: "income",
+    headerName: "Income",
     type: "number",
-    width: 90,
+    flex: 1,
   },
   {
-    field: "fullName",
-    headerName: "Full name",
-    description: "This column has a value getter and is not sortable.",
-    sortable: false,
-    width: 160,
-    valueGetter: (value, row) => `${row.firstName || ""} ${row.lastName || ""}`,
+    field: "loanAmount",
+    headerName: "Loan Amount",
+    type: "number",
+    flex: 1,
   },
 ];
 
@@ -37,10 +39,38 @@ const rows = [
 const paginationModel = { page: 0, pageSize: 5 };
 
 export default function DataTable() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [usersData, setUsersData] = useState([]);
+
+  useEffect(() => {
+    userDetails();
+  }, []);
+
+  const userDetails = async () => {
+    try {
+      setIsLoading(true);
+      const response = await getUserData();
+      setUsersData(response.data);
+
+      console.log(response.data);
+    } catch (error) {
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <Paper sx={{ height: 400, width: "100%" }}>
+    <Paper
+      sx={{
+        height: 600,
+        width: "95%",
+        bgcolor: "#b2ebf2",
+        borderRadius: 6,
+        padding: 2,
+      }}
+    >
       <DataGrid
-        rows={rows}
+        rows={usersData}
         columns={columns}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}

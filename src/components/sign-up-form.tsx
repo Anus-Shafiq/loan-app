@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/client";
+import { supabase } from "@/lib/client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,11 +11,27 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export function SignUpForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data, error } = await supabase.auth.getUser();
+
+      if (data.user) {
+        navigate("/dashboard");
+      }
+      console.log(data.user);
+    };
+    checkAuth();
+  }, []);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
@@ -24,7 +40,6 @@ export function SignUpForm({
   const [success, setSuccess] = useState(false);
 
   const handleSignUp = async (e: React.FormEvent) => {
-    const supabase = createClient();
     e.preventDefault();
     setError(null);
 
@@ -116,9 +131,9 @@ export function SignUpForm({
               </div>
               <div className="mt-4 text-center text-sm">
                 Already have an account?{" "}
-                <a href="/login" className="underline underline-offset-4">
+                <Link to="/login" className="underline underline-offset-4">
                   Login
-                </a>
+                </Link>
               </div>
             </form>
           </CardContent>

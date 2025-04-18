@@ -11,9 +11,13 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { useDemoRouter } from "@toolpad/core/internal";
-// import Button from "react-bootstrap/Button";
 import { Button } from "@mui/material";
 import DataTable from "./table";
+import { supabase } from "@/lib/client";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import LoanStepperForm from "./steppers";
+import DashboardData from "./dashboarddata";
 
 const NAVIGATION = [
   {
@@ -67,18 +71,38 @@ function DemoPageContent({ pathname }) {
     >
       {pathname === "/My-Loan-Requests" ? (
         <DataTable />
+      ) : pathname === "/New-Loan" ? (
+        <LoanStepperForm />
+      ) : pathname === "/dashboard" ? (
+        <DashboardData />
+      ) : pathname === "/Profile" ? (
+        <Typography>Dashboard content for {pathname}</Typography>
       ) : (
         <Typography>Dashboard content for {pathname}</Typography>
       )}
-
-      {console.log(pathname)}
     </Box>
   );
 }
 
 const SidebarFooterAccount = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
   return (
-    <Button variant="text" size="large" endIcon={<LogoutIcon />}>
+    <Button
+      onClick={handleLogout}
+      variant="text"
+      size="large"
+      endIcon={<LogoutIcon />}
+    >
       Log Out
     </Button>
   );
@@ -89,6 +113,19 @@ DemoPageContent.propTypes = {
 };
 
 function DashboardLayoutBranding(props) {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data, error } = await supabase.auth.getUser();
+
+      if (error) {
+        navigate("/login");
+      }
+      console.log(data.user);
+    };
+    checkAuth();
+  }, []);
+
   const { window } = props;
 
   const router = useDemoRouter("/dashboard");

@@ -1,8 +1,14 @@
-import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+// import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
-export function createClient() {
-  return createSupabaseClient(
-    "https://ybzqmfldjtvymgrnghdg.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlienFtZmxkanR2eW1ncm5naGRnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQyMDQ5NTIsImV4cCI6MjA1OTc4MDk1Mn0.2KFKVBXvVkufeIPL8e2k6MPwyNTryjjXBke8gbbCia8"
-  );
-}
+// export function createClient() {
+//   return createSupabaseClient(
+//     import.meta.env.VITE_SUPABASE_URL,
+//     import.meta.env.VITE_SUPABASE_ANON_KEY
+//   );
+// }
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+export const supabase = createClient(supabaseUrl, supabaseKey);

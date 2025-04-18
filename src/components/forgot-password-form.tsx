@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/client";
+import { supabase } from "@/lib/client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,6 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export function ForgotPasswordForm({
   className,
@@ -22,7 +23,6 @@ export function ForgotPasswordForm({
   const [isLoading, setIsLoading] = useState(false);
 
   const handleForgotPassword = async (e: React.FormEvent) => {
-    const supabase = createClient();
     e.preventDefault();
     setIsLoading(true);
     setError(null);
@@ -86,9 +86,9 @@ export function ForgotPasswordForm({
               </div>
               <div className="mt-4 text-center text-sm">
                 Already have an account?{" "}
-                <a href="/login" className="underline underline-offset-4">
+                <Link to="/login" className="underline underline-offset-4">
                   Login
-                </a>
+                </Link>
               </div>
             </form>
           </CardContent>
