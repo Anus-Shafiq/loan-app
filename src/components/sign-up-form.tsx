@@ -12,26 +12,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 
 export function SignUpForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const navigate = useNavigate();
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data, error } = await supabase.auth.getUser();
-
-      if (data.user) {
-        navigate("/dashboard");
-      }
-      console.log(data.user);
-    };
-    checkAuth();
-  }, []);
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
@@ -50,11 +35,15 @@ export function SignUpForm({
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
       });
       if (error) throw error;
+      if (data) {
+        console.log(data);
+        insertData(data);
+      }
       setSuccess(true);
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
@@ -62,6 +51,24 @@ export function SignUpForm({
       setIsLoading(false);
     }
   };
+
+  async function insertData(data) {
+    const lowerEmail = email.toLowerCase();
+    const isAdmin =
+      lowerEmail.includes("admin") || lowerEmail.includes("manager");
+    try {
+      const { data: userData, error: userError } = await supabase
+        .from("users")
+        .insert({
+          userId: data.user.id,
+          email: email,
+          role: isAdmin ? "admin" : "user",
+        })
+        .select();
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>

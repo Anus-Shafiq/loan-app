@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
@@ -19,17 +19,6 @@ export function LoginForm({
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   const navigate = useNavigate();
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data, error } = await supabase.auth.getUser();
-
-      if (data.user) {
-        navigate("/dashboard");
-      }
-      console.log(data.user);
-    };
-    checkAuth();
-  }, []);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);

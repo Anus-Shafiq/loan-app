@@ -11,6 +11,7 @@ import {
 import { useForm, FormProvider } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/client";
+import { useUser } from "@/context/store";
 
 const steps = [
   "Personal Information",
@@ -155,21 +156,6 @@ function ReviewForm({ formData }) {
   );
 }
 
-async function addData(formData) {
-  try {
-    const { error } = await supabase.from("loanDetails").insert({
-      fullName: formData.fullName,
-      email: formData.email,
-      occupation: formData.occupation,
-      income: formData.income,
-      loanAmount: formData.loanAmount,
-      loanPurpose: formData.loanPurpose,
-    });
-
-    if (error) throw error;
-  } catch (error) {}
-}
-
 const useFormContext = () => {
   return React.useContext(FormContext);
 };
@@ -177,6 +163,8 @@ const useFormContext = () => {
 const FormContext = React.createContext();
 
 export default function LoanApplicationStepper() {
+  const { user } = useUser();
+  console.log(user);
   const methods = useForm({
     mode: "onTouched",
   });
@@ -185,17 +173,32 @@ export default function LoanApplicationStepper() {
   useEffect(() => {
     console.log(formData);
   }, [formData]);
+
+  async function addData(formData) {
+    try {
+      const { error } = await supabase.from("loanDetails").insert({
+        fullName: formData.fullName,
+        email: formData.email,
+        occupation: formData.occupation,
+        income: formData.income,
+        loanAmount: formData.loanAmount,
+        loanPurpose: formData.loanPurpose,
+        userId: user.userId,
+      });
+
+      if (error) throw error;
+    } catch (error) {}
+  }
   const navigate = useNavigate();
 
   const onNext = (data) => {
     const updatedFormData = { ...formData, ...data };
 
     if (activeStep === steps.length - 1) {
-      console.log("Submitting data:", updatedFormData);
       addData(updatedFormData)
         .then(() => {
           setFormData(updatedFormData);
-          setActiveStep((prev) => prev + 1); // Move to success screen
+          setActiveStep((prev) => prev + 1);
         })
         .catch((error) => {
           console.error("Error submitting form:", error);

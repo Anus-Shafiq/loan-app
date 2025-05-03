@@ -1,82 +1,166 @@
 import * as React from "react";
-import { DataGrid } from "@mui/x-data-grid";
-import Paper from "@mui/material/Paper";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { Paper, Chip, Box } from "@mui/material";
 import { useEffect, useState } from "react";
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from "@mui/icons-material/Delete";
+import DoneIcon from "@mui/icons-material/Done";
+import Button from "@mui/material/Button";
+import { supabase } from "@/lib/client";
+import useUserData from "../lib/user";
 
-import getUserData from "@/lib/user";
-
-const columns = [
-  { field: "id", headerName: "ID", flex: 1 },
-  { field: "fullName", headerName: "Name", flex: 1 },
-  { field: "occupation", headerName: "Occupation", flex: 1 },
-  { field: "status", headerName: "Status", flex: 1 },
-  {
-    field: "income",
-    headerName: "Income",
-    type: "number",
-    flex: 1,
-  },
-  {
-    field: "loanAmount",
-    headerName: "Loan Amount",
-    type: "number",
-    flex: 1,
-  },
-];
-
-const rows = [
-  { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
-  { id: 2, lastName: "Lannister", firstName: "Cersei", age: 42 },
-  { id: 3, lastName: "Lannister", firstName: "Jaime", age: 45 },
-  { id: 4, lastName: "Stark", firstName: "Arya", age: 16 },
-  { id: 5, lastName: "Targaryen", firstName: "Daenerys", age: null },
-  { id: 6, lastName: "Melisandre", firstName: null, age: 150 },
-  { id: 7, lastName: "Clifford", firstName: "Ferrara", age: 44 },
-  { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
-  { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
-];
-
-const paginationModel = { page: 0, pageSize: 5 };
+const paginationModel = { page: 0, pageSize: 10 };
 
 export default function DataTable() {
-  const [isLoading, setIsLoading] = useState(false);
+  const { userData, loading, admin } = useUserData();
   const [usersData, setUsersData] = useState([]);
 
   useEffect(() => {
-    userDetails();
-  }, []);
+    if (userData) {
+      setUsersData(userData);
+    }
+  }, [userData]);
 
-  const userDetails = async () => {
+  const handleDelete = async (id) => {
     try {
-      setIsLoading(true);
-      const response = await getUserData();
-      setUsersData(response.data);
+      const { error } = await supabase
+        .from("loanDetails")
+        .delete()
+        .eq("id", id);
 
-      console.log(response.data);
-    } catch (error) {
-    } finally {
-      setIsLoading(false);
+      if (error) throw error;
+
+      const updatedData = usersData.filter((user) => user.id !== id);
+      setUsersData(updatedData);
+    } catch (err) {
+      console.error(err);
     }
   };
 
+  const columns = [
+    { field: "id", headerName: "ID", minWidth: 100 },
+    { field: "fullName", headerName: "Name", minWidth: 180 },
+    { field: "occupation", headerName: "Occupation", minWidth: 180 },
+    {
+      field: "status",
+      headerName: "Status",
+      minWidth: 130,
+      renderCell: (params) => {
+        const value = params.value?.toLowerCase() || "";
+        const color =
+          value === "approved"
+            ? "success"
+            : value === "rejected"
+              ? "error"
+              : value === "pending"
+                ? "warning"
+                : "default";
+        return <Chip label={value} color={color} />;
+      },
+    },
+    {
+      field: "income",
+      headerName: "Income",
+      type: "number",
+      minWidth: 150,
+    },
+    {
+      field: "loanAmount",
+      headerName: "Loan Amount",
+      type: "number",
+      minWidth: 150,
+    },
+    ...(admin
+      ? [
+          {
+            field: "requestActions",
+            headerName: "Request Actions",
+            minWidth: 290,
+            sortable: false,
+            filterable: false,
+            renderCell: () => (
+              <>
+                <Button
+                  variant="contained"
+                  color="error"
+                  startIcon={<DeleteIcon />}
+                >
+                  Delete
+                </Button>
+                <Button
+                  variant="contained"
+                  color="success"
+                  startIcon={<DoneIcon />}
+                  sx={{ ml: 1 }}
+                >
+                  Accept
+                </Button>
+              </>
+            ),
+          },
+        ]
+      : []),
+    {
+      field: "delete",
+      headerName: "Delete",
+      minWidth: 100,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => (
+        <IconButton onClick={() => handleDelete(params.id)}>
+          <DeleteIcon />
+        </IconButton>
+      ),
+    },
+  ];
+
   return (
-    <Paper
+    <Box
       sx={{
-        height: 600,
-        width: "95%",
-        bgcolor: "#b2ebf2",
-        borderRadius: 6,
-        padding: 2,
+        width: "100%",
+        overflowX: "auto",
+        p: { xs: 1, sm: 2, md: 3 },
       }}
     >
-      <DataGrid
-        rows={usersData}
-        columns={columns}
-        initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[5, 10]}
-        checkboxSelection
-        sx={{ border: 0 }}
-      />
-    </Paper>
+      <Paper
+        sx={{
+          minWidth: "1000px",
+          maxWidth: "100%",
+          overflowX: "auto",
+          mx: "auto",
+          bgcolor: "#b2ebf2",
+          borderRadius: 4,
+          p: 2,
+        }}
+      >
+        <Box
+          sx={{
+            width: "100%",
+            height: { xs: 400, sm: 500, md: 600 },
+          }}
+        >
+          <DataGrid
+            rows={usersData}
+            columns={columns}
+            loading={loading}
+            initialState={{ pagination: { paginationModel } }}
+            pageSizeOptions={[5, 10]}
+            disableRowSelectionOnClick
+            slots={{ toolbar: GridToolbar }}
+            slotProps={{
+              toolbar: {
+                showQuickFilter: true,
+                quickFilterProps: { debounceMs: 500 },
+              },
+            }}
+            sx={{
+              border: 0,
+              fontSize: { xs: 12, sm: 14 },
+              minWidth: "1000px",
+            }}
+          />
+        </Box>
+      </Paper>
+    </Box>
   );
 }

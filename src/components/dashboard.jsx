@@ -15,32 +15,9 @@ import { Button } from "@mui/material";
 import DataTable from "./table";
 import { supabase } from "@/lib/client";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import LoanStepperForm from "./steppers";
 import DashboardData from "./dashboarddata";
-
-const NAVIGATION = [
-  {
-    segment: "dashboard",
-    title: "Dashboard",
-    icon: <DashboardIcon />,
-  },
-  {
-    segment: "My-Loan-Requests",
-    title: "My Loan Requests",
-    icon: <DescriptionIcon />,
-  },
-  {
-    segment: "New-Loan",
-    title: "New Loan",
-    icon: <AddCircleIcon />,
-  },
-  {
-    segment: "Profile",
-    title: "Profile",
-    icon: <PersonIcon />,
-  },
-];
+import useUserData from "../lib/user";
 
 const demoTheme = createTheme({
   cssVariables: {
@@ -69,7 +46,7 @@ function DemoPageContent({ pathname }) {
         textAlign: "center",
       }}
     >
-      {pathname === "/My-Loan-Requests" ? (
+      {pathname === "/My-Loan-Requests" || pathname === "/Loan-Requests" ? (
         <DataTable />
       ) : pathname === "/New-Loan" ? (
         <LoanStepperForm />
@@ -113,18 +90,30 @@ DemoPageContent.propTypes = {
 };
 
 function DashboardLayoutBranding(props) {
-  const navigate = useNavigate();
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data, error } = await supabase.auth.getUser();
+  const { userData, loading, admin } = useUserData();
 
-      if (error) {
-        navigate("/login");
-      }
-      console.log(data.user);
-    };
-    checkAuth();
-  }, []);
+  const NAVIGATION = [
+    {
+      segment: "dashboard",
+      title: "Dashboard",
+      icon: <DashboardIcon />,
+    },
+    {
+      segment: admin ? "Loan-Requests" : "My-Loan-Requests",
+      title: admin ? "Loan Requests" : "My Loan Requests",
+      icon: <DescriptionIcon />,
+    },
+    {
+      segment: "New-Loan",
+      title: "New Loan",
+      icon: <AddCircleIcon />,
+    },
+    {
+      segment: "Profile",
+      title: "Profile",
+      icon: <PersonIcon />,
+    },
+  ];
 
   const { window } = props;
 
@@ -139,7 +128,7 @@ function DashboardLayoutBranding(props) {
       navigation={NAVIGATION}
       branding={{
         logo: <img src="https://mui.com/static/logo.png" alt="MUI logo" />,
-        title: "MUI",
+        title: "Loan Lelo",
         homeUrl: "/toolpad/core/introduction",
       }}
       router={router}
