@@ -25,6 +25,7 @@ export default function useUserData() {
       if (error) throw error;
       if (data) {
         setUserData(data);
+        console.log("User data:", data);
       }
 
       setLoading(false);

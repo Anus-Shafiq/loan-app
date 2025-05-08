@@ -1,10 +1,11 @@
+import useUserData from "../lib/user";
 import * as React from "react";
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { createTheme } from "@mui/material/styles";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import PersonIcon from "@mui/icons-material/Person";
+import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import DescriptionIcon from "@mui/icons-material/Description";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -17,7 +18,7 @@ import { supabase } from "@/lib/client";
 import { useNavigate } from "react-router-dom";
 import LoanStepperForm from "./steppers";
 import DashboardData from "./dashboarddata";
-import useUserData from "../lib/user";
+import AllUserData from "./allUser";
 
 const demoTheme = createTheme({
   cssVariables: {
@@ -52,8 +53,9 @@ function DemoPageContent({ pathname }) {
         <LoanStepperForm />
       ) : pathname === "/dashboard" ? (
         <DashboardData />
-      ) : pathname === "/Profile" ? (
-        <Typography>Dashboard content for {pathname}</Typography>
+      ) : pathname === "/users" ? (
+        // <Typography>Dashboard content for {pathname}</Typography>
+        <AllUserData />
       ) : (
         <Typography>Dashboard content for {pathname}</Typography>
       )}
@@ -103,16 +105,24 @@ function DashboardLayoutBranding(props) {
       title: admin ? "Loan Requests" : "My Loan Requests",
       icon: <DescriptionIcon />,
     },
-    {
-      segment: "New-Loan",
-      title: "New Loan",
-      icon: <AddCircleIcon />,
-    },
-    {
-      segment: "Profile",
-      title: "Profile",
-      icon: <PersonIcon />,
-    },
+    ...(!admin
+      ? [
+          {
+            segment: "New-Loan",
+            title: "New Loan",
+            icon: <AddCircleIcon />,
+          },
+        ]
+      : []),
+    ...(admin
+      ? [
+          {
+            segment: "users",
+            title: "Users",
+            icon: <PeopleAltIcon />,
+          },
+        ]
+      : []),
   ];
 
   const { window } = props;
@@ -127,8 +137,8 @@ function DashboardLayoutBranding(props) {
     <AppProvider
       navigation={NAVIGATION}
       branding={{
-        logo: <img src="https://mui.com/static/logo.png" alt="MUI logo" />,
-        title: "Loan Lelo",
+        logo: "",
+        title: "Swift Loan",
         homeUrl: "/toolpad/core/introduction",
       }}
       router={router}

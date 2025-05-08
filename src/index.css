@@ -16,10 +16,11 @@
 }
 
 body {
-  margin: auto;
+  margin: 0 auto;
   display: flex;
-  place-items: center;
-  min-width: 320px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
   min-height: 100vh;
 }
 
