@@ -3,7 +3,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useUser } from "@/context/store";
 import useLoanRealtime from "../lib/useLoanRealtime";
 import { Grid, Box, Typography } from "@mui/material";
-
+import { LineChart } from "@mui/x-charts/LineChart";
 import CardSection from "./card";
 
 import {
@@ -23,6 +23,7 @@ import { PuffLoader, PulseLoader } from "react-spinners";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { BarChart } from "@mui/x-charts/BarChart";
 import LinearProgress from "@mui/material/LinearProgress";
+import { format } from "date-fns";
 
 export default function DashboardData() {
   const { userData, admin } = useUserData();
@@ -31,33 +32,71 @@ export default function DashboardData() {
   const [isLoading, setLoading] = useState(true);
   const [statusCounts, setStatusCounts] = useState({});
   const { user, loading } = useUser();
+  const [monthWiseStats, setMonthWiseStats] = useState([]);
 
   useLoanRealtime(setAllData);
-
-  // useEffect(() => {
-  //   if (userData?.length) {
-  //     setAllData(userData);
-  //     setLoading(false);
-  //   }
-  // }, [userData]);
 
   useEffect(() => {
     if (userData) {
       setAllData(userData);
-      setLoading(false); // ✅ set loading false once you have data, even if empty
+      setLoading(false);
     }
   }, [userData]);
+
+  // useEffect(() => {
+  //   if (allData.length) {
+  //     setTotal(allData.length);
+
+  //     const counts = {};
+  //     allData.forEach((item) => {
+  //       const status = item.status?.toLowerCase() || "unknown";
+  //       counts[status] = (counts[status] || 0) + 1;
+  //     });
+
+  //     setStatusCounts(counts);
+  //   }
+  // }, [allData]);
 
   useEffect(() => {
     if (allData.length) {
       setTotal(allData.length);
-
+      const statsMap = {};
       const counts = {};
+
       allData.forEach((item) => {
+        const date = new Date(item.created_at);
+        const monthKey = format(date, "yyyy-MM");
+        const monthLabel = format(date, "MMM");
         const status = item.status?.toLowerCase() || "unknown";
+
         counts[status] = (counts[status] || 0) + 1;
+
+        if (!statsMap[monthKey]) {
+          statsMap[monthKey] = {
+            month: monthLabel,
+            approved: 0,
+            rejected: 0,
+            pending: 0,
+          };
+        }
+
+        const amount = Number(item.loanAmount) || 0;
+
+        if (status === "approved") statsMap[monthKey].approved += amount;
+        else if (status === "rejected") statsMap[monthKey].rejected += amount;
+        else if (status === "pending") statsMap[monthKey].pending += amount;
       });
 
+      console.log("statsMap", statsMap);
+      // Convert to array & sort
+      const sortedStats = Object.entries(statsMap)
+        .sort(([a], [b]) => new Date(a) - new Date(b))
+        .slice(-3)
+        .map(([, value]) => value);
+
+      console.log("sortedStats", sortedStats);
+      // Save to state
+      setMonthWiseStats(sortedStats);
       setStatusCounts(counts);
     }
   }, [allData]);
@@ -210,7 +249,11 @@ export default function DashboardData() {
             }
             status={"total amount"}
             statusValue={
-              isLoading ? <PulseLoader size={10} /> : totals.approved || 0
+              isLoading ? (
+                <PulseLoader size={10} />
+              ) : (
+                `₨ ${totals.approved || 0}`
+              )
             }
           />
         </Grid>
@@ -228,7 +271,7 @@ export default function DashboardData() {
             }
             status={"Pending amount"}
             statusValue={
-              isLoading ? <PulseLoader size={10} /> : totals.pending || 0
+              isLoading ? <PulseLoader size={10} /> : `₨ ${totals.pending || 0}`
             }
           />
         </Grid>
@@ -246,7 +289,11 @@ export default function DashboardData() {
             }
             status={"rejected amount"}
             statusValue={
-              isLoading ? <PulseLoader size={10} /> : totals.rejected || 0
+              isLoading ? (
+                <PulseLoader size={10} />
+              ) : (
+                `₨ ${totals.rejected || 0}`
+              )
             }
           />
         </Grid>
@@ -276,13 +323,20 @@ export default function DashboardData() {
               justifyContent: "center",
             }}
           >
-            Loan Details in Chart
+            Loan Status Distribution
           </Typography>
           <PieChart
             sx={{ width: "100%" }}
             series={[
               {
                 data: pieChartData,
+                innerRadius: 90,
+                highlightScope: { fade: "global", highlight: "item" },
+                faded: {
+                  innerRadius: 90,
+                  additionalRadius: -30,
+                  color: "gray",
+                },
               },
             ]}
             height={300}
@@ -293,7 +347,7 @@ export default function DashboardData() {
                   vertical: "bottom",
                   horizontal: "middle",
                 },
-                itemGap: 20,
+
                 sx: {
                   mt: 4,
                 },
@@ -346,17 +400,90 @@ export default function DashboardData() {
               xAxis={[
                 {
                   id: "barCategories",
-                  data: ["Pending", "Rejected", "Approved"],
+                  data: [
+                    "Pending Amount",
+                    "Rejected Amount",
+                    "Approved Amount",
+                    "Total Amount",
+                  ],
+                  scaleType: "band",
+                },
+              ]}
+              height={380}
+              series={[
+                {
+                  data: [
+                    totals.pending,
+                    totals.rejected,
+                    totals.approved,
+                    totals.pending + totals.rejected + totals.approved,
+                  ],
+                  color: blue[500],
+                },
+              ]}
+            />
+          </Box>
+        </Grid>
+        <Grid
+          size={{ xs: 12, sm: 6, md: 6, lg: 6 }}
+          sx={{
+            boxShadow: 3,
+            bgcolor: "#b2ebf2",
+            borderRadius: 6,
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-end",
+              height: "100%",
+            }}
+          >
+            <Typography
+              variant="h4"
+              sx={{
+                mb: 0,
+
+                width: "100%",
+
+                borderRadius: 6,
+
+                textAlign: "center",
+                textTransform: "capitalize",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                mt: 2,
+              }}
+            >
+              Amount Details
+            </Typography>
+            <LineChart
+              height={300}
+              xAxis={[
+                {
+                  data: monthWiseStats.map((item) => item.month),
                   scaleType: "band",
                 },
               ]}
               series={[
                 {
-                  data: [totals.pending, totals.rejected, totals.approved],
-                  color: " rgba(50, 178, 233, 0.94)",
+                  data: monthWiseStats.map((item) => item.approved),
+                  label: "Approved",
+                  color: green[500],
+                },
+                {
+                  data: monthWiseStats.map((item) => item.rejected),
+                  label: "Rejected",
+                  color: red[500],
+                },
+                {
+                  data: monthWiseStats.map((item) => item.pending),
+                  label: "Pending",
+                  color: orange[500],
                 },
               ]}
-              height={300}
             />
           </Box>
         </Grid>

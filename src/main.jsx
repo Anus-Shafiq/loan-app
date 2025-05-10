@@ -21,7 +21,7 @@ createRoot(document.getElementById("root")).render(
     <BrowserRouter>
       <UserProvider>
         <Routes>
-          <Route path="/" element={<SignUpForm />} />
+          <Route path="/" element={<LoginForm />} />
           <Route path="/sign-up" element={<SignUpForm />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/forgot-password" element={<ForgotPasswordForm />} />

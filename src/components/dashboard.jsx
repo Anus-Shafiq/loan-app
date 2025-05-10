@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import LoanStepperForm from "./steppers";
 import DashboardData from "./dashboarddata";
 import AllUserData from "./allUser";
+import AdminDashboard from "./adminDashboard";
 
 const demoTheme = createTheme({
   cssVariables: {

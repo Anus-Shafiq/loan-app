@@ -14,20 +14,18 @@ export const UserProvider = ({ children }) => {
     const fetchUser = async () => {
       const { data, error } = await supabase.auth.getUser();
       const publicRoutes = ["/login", "/sign-up", "/"];
-      console.log(data.user);
 
       if (data?.user) {
-        console.log("User is logged in:", data.user.id);
         try {
           const { data: userData, error: userError } = await supabase
             .from("users")
             .select()
-            .eq("userId", data.user.id);
+            .eq("userId", data.user.id)
+            .single();
 
           if (userError) throw userError;
           if (userData) {
-            console.log(userData[0]);
-            setUser(userData[0]);
+            setUser(userData);
             if (publicRoutes.includes(location.pathname)) {
               navigate("/dashboard");
             }
