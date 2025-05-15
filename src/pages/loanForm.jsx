@@ -230,7 +230,6 @@ export default function LoanApplicationStepper() {
             width: "95%",
             mx: "auto",
             p: 3,
-            bgcolor: "#b2ebf2",
             borderRadius: 6,
             padding: 2,
           }}

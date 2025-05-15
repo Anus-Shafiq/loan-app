@@ -1,9 +1,11 @@
-import useUserData from "../lib/user";
+import { useUser } from "@/context/store";
 import * as React from "react";
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { createTheme } from "@mui/material/styles";
+import { useTheme as useMuiTheme } from "@mui/material/styles";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import DescriptionIcon from "@mui/icons-material/Description";
@@ -11,31 +13,30 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
-import { useDemoRouter } from "@toolpad/core/internal";
 import { Button } from "@mui/material";
-import DataTable from "./table";
+import DataTable from "./loanTable";
 import { supabase } from "@/lib/client";
-import { useNavigate } from "react-router-dom";
-import LoanStepperForm from "./steppers";
-import DashboardData from "./dashboarddata";
-import AllUserData from "./allUser";
-import AdminDashboard from "./adminDashboard";
-
-const demoTheme = createTheme({
-  cssVariables: {
-    colorSchemeSelector: "data-toolpad-color-scheme",
-  },
-  colorSchemes: { light: true, dark: true },
-  breakpoints: {
-    values: {
-      xs: 0,
-      sm: 600,
-      md: 600,
-      lg: 1200,
-      xl: 1536,
-    },
-  },
-});
+import { useNavigate, useLocation } from "react-router-dom";
+import { theme } from "@/lib/theme";
+import LoanStepperForm from "./loanForm";
+import DashboardData from "../components/dashboarddata";
+import AllUserData from "./allUserTable";
+import { CssVarsProvider, useColorScheme } from "@mui/material/styles";
+// const demoTheme = createTheme({
+//   cssVariables: {
+//     colorSchemeSelector: "data-toolpad-color-scheme",
+//   },
+//   colorSchemes: { light: true, dark: true },
+//   breakpoints: {
+//     values: {
+//       xs: 0,
+//       sm: 600,
+//       md: 600,
+//       lg: 1200,
+//       xl: 1536,
+//     },
+//   },
+// });
 
 function DemoPageContent({ pathname }) {
   return (
@@ -93,7 +94,10 @@ DemoPageContent.propTypes = {
 };
 
 function DashboardLayoutBranding(props) {
-  const { userData, loading, admin } = useUserData();
+  const { user, loading, admin, loanData } = useUser();
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const NAVIGATION = [
     {
@@ -106,15 +110,6 @@ function DashboardLayoutBranding(props) {
       title: admin ? "Loan Requests" : "My Loan Requests",
       icon: <DescriptionIcon />,
     },
-    ...(!admin
-      ? [
-          {
-            segment: "New-Loan",
-            title: "New Loan",
-            icon: <AddCircleIcon />,
-          },
-        ]
-      : []),
     ...(admin
       ? [
           {
@@ -123,47 +118,62 @@ function DashboardLayoutBranding(props) {
             icon: <PeopleAltIcon />,
           },
         ]
-      : []),
+      : [
+          {
+            segment: "New-Loan",
+            title: "New Loan",
+            icon: <AddCircleIcon />,
+          },
+        ]),
   ];
 
   const { window } = props;
 
-  const router = useDemoRouter("/dashboard");
+  const { mode, setMode } = useColorScheme();
 
-  // Remove this const when copying and pasting into your project.
+  setMode("dark");
+
+  const router = React.useMemo(
+    () => ({
+      pathname: location.pathname,
+      searchParams: new URLSearchParams(location.search),
+      navigate: (path) => navigate(path),
+    }),
+    [location, navigate]
+  );
+
   const demoWindow = window !== undefined ? window() : undefined;
 
   return (
     // preview-start
-    <AppProvider
-      navigation={NAVIGATION}
-      branding={{
-        logo: "",
-        title: "Swift Loan",
-        homeUrl: "/toolpad/core/introduction",
-      }}
-      router={router}
-      theme={demoTheme}
-      window={demoWindow}
-    >
-      <DashboardLayout
-        slots={{
-          toolbarAccount: () => null,
-          sidebarFooter: SidebarFooterAccount,
+    //
+    <CssVarsProvider theme={theme}>
+      <AppProvider
+        theme={theme}
+        navigation={NAVIGATION}
+        branding={{
+          logo: "",
+          title: "Swift Loan",
+          homeUrl: "/toolpad/core/introduction",
         }}
+        router={router}
+        window={demoWindow}
       >
-        <DemoPageContent pathname={router.pathname} />
-      </DashboardLayout>
-    </AppProvider>
+        <DashboardLayout
+          slots={{
+            toolbarAccount: () => null,
+            sidebarFooter: SidebarFooterAccount,
+          }}
+        >
+          <DemoPageContent pathname={router.pathname} />
+        </DashboardLayout>
+      </AppProvider>
+    </CssVarsProvider>
     // preview-end
   );
 }
 
 DashboardLayoutBranding.propTypes = {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * Remove this when copying and pasting into your project.
-   */
   window: PropTypes.func,
 };
 

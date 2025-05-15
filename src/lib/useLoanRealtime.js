@@ -1,15 +1,15 @@
 import { useEffect } from "react";
 import { supabase } from "@/lib/client";
 
-export default function useLoanRealtime(setUsersData) {
+export default function useLoanRealtime({ table, setData }) {
   useEffect(() => {
     const channel = supabase
-      .channel("loanDetails-updates")
+      .channel(`${table}-updates`)
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "loanDetails" },
+        { event: "*", schema: "public", table },
         (payload) => {
-          setUsersData((prev) => {
+          setData((prev) => {
             if (payload.eventType === "INSERT") {
               return [...prev, payload.new];
             } else if (payload.eventType === "UPDATE") {
@@ -28,5 +28,5 @@ export default function useLoanRealtime(setUsersData) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [setUsersData]);
+  }, [table, setData]);
 }

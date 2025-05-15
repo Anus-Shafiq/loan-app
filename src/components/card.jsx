@@ -14,7 +14,7 @@ export default function CardSection({
   bgcolor,
 }) {
   return (
-    <Card sx={{ bgcolor: "#b2ebf2", borderRadius: 6, padding: 2 }}>
+    <Card sx={{ borderRadius: 6, padding: 2 }}>
       <Box
         sx={{
           mb: 2,
@@ -40,9 +40,7 @@ export default function CardSection({
           {icon}
         </Box>
         <Box>
-          <Typography variant="h7" sx={{ color: blueGrey[800] }}>
-            {title}
-          </Typography>
+          <Typography variant="h7">{title}</Typography>
           <Typography variant="h6">{titleValue}</Typography>
         </Box>
       </Box>
@@ -55,9 +53,7 @@ export default function CardSection({
           justifyContent: "space-between",
         }}
       >
-        <Typography variant="h7" sx={{ color: blueGrey[800] }}>
-          {status}
-        </Typography>
+        <Typography variant="h7">{status}</Typography>
         <Typography variant="h7">{statusValue}</Typography>
       </Box>
     </Card>

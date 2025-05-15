@@ -1,11 +1,10 @@
-import useUserData from "../lib/user";
-import { useEffect, useState, useMemo } from "react";
 import { useUser } from "@/context/store";
+import { useEffect, useState, useMemo } from "react";
 import useLoanRealtime from "../lib/useLoanRealtime";
-import { Grid, Box, Typography } from "@mui/material";
+import { Grid, Box, Typography, Card } from "@mui/material";
 import { LineChart } from "@mui/x-charts/LineChart";
 import CardSection from "./card";
-
+import Divider from "@mui/material/Divider";
 import {
   red,
   purple,
@@ -24,38 +23,25 @@ import { PieChart } from "@mui/x-charts/PieChart";
 import { BarChart } from "@mui/x-charts/BarChart";
 import LinearProgress from "@mui/material/LinearProgress";
 import { format } from "date-fns";
+import { useTheme } from "@mui/material";
 
 export default function DashboardData() {
-  const { userData, admin } = useUserData();
   const [allData, setAllData] = useState([]);
   const [total, setTotal] = useState(0);
   const [isLoading, setLoading] = useState(true);
   const [statusCounts, setStatusCounts] = useState({});
-  const { user, loading } = useUser();
+  const { user, loading, admin, loanData } = useUser();
   const [monthWiseStats, setMonthWiseStats] = useState([]);
+  const theme = useTheme();
 
   useLoanRealtime(setAllData);
 
   useEffect(() => {
-    if (userData) {
-      setAllData(userData);
+    if (loanData) {
+      setAllData(loanData);
       setLoading(false);
     }
-  }, [userData]);
-
-  // useEffect(() => {
-  //   if (allData.length) {
-  //     setTotal(allData.length);
-
-  //     const counts = {};
-  //     allData.forEach((item) => {
-  //       const status = item.status?.toLowerCase() || "unknown";
-  //       counts[status] = (counts[status] || 0) + 1;
-  //     });
-
-  //     setStatusCounts(counts);
-  //   }
-  // }, [allData]);
+  }, [loanData]);
 
   useEffect(() => {
     if (allData.length) {
@@ -87,14 +73,12 @@ export default function DashboardData() {
         else if (status === "pending") statsMap[monthKey].pending += amount;
       });
 
-      console.log("statsMap", statsMap);
       // Convert to array & sort
       const sortedStats = Object.entries(statsMap)
         .sort(([a], [b]) => new Date(a) - new Date(b))
         .slice(-3)
         .map(([, value]) => value);
 
-      console.log("sortedStats", sortedStats);
       // Save to state
       setMonthWiseStats(sortedStats);
       setStatusCounts(counts);
@@ -115,8 +99,6 @@ export default function DashboardData() {
     [allData]
   );
 
-  console.log(totals);
-
   const pieChartData = Object.entries(statusCounts).map(
     ([status, count], index) => {
       const label = status.charAt(0).toUpperCase() + status.slice(1);
@@ -124,13 +106,13 @@ export default function DashboardData() {
 
       switch (status.toLowerCase()) {
         case "approved":
-          color = green[500];
+          color = theme.palette.customPurple.main;
           break;
         case "pending":
-          color = orange[500]; // orange
+          color = theme.palette.customBlue.main; // orange
           break;
         case "rejected":
-          color = red[500]; // red
+          color = theme.palette.customPink.main; // red
           break;
       }
 
@@ -148,11 +130,9 @@ export default function DashboardData() {
       id: pieChartData.length,
       value: total,
       label: "Total",
-      color: blue[500], // blue
+      color: theme.palette.customYellow.main, // blue
     });
   }
-
-  console.log(allData);
 
   if (isLoading || loading) {
     return (
@@ -176,10 +156,8 @@ export default function DashboardData() {
       <Typography
         variant="h4"
         sx={{
-          mb: { xs: 3, md: 5 },
-
           width: "95%",
-          bgcolor: "#b2ebf2",
+
           borderRadius: 6,
           padding: 2,
           textAlign: "start",
@@ -196,6 +174,13 @@ export default function DashboardData() {
           <PulseLoader size={20} margin={10} />
         )}
       </Typography>
+      <Divider
+        sx={{
+          width: "95%",
+          mx: "auto",
+          my: 3,
+        }}
+      />
       <Grid container spacing={3} sx={{ width: "95%" }}>
         <Grid size={{ xs: 12, sm: 6, md: 6, lg: 3 }}>
           <CardSection
@@ -298,83 +283,19 @@ export default function DashboardData() {
           />
         </Grid>
 
-        <Grid
-          size={{ xs: 12, sm: 6, md: 6, lg: 6 }}
-          sx={{
-            boxShadow: 3,
-            bgcolor: "#b2ebf2",
-            borderRadius: 6,
-            padding: 2,
-          }}
-        >
-          <Typography
-            variant="h4"
+        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+          <Card
             sx={{
-              mb: { xs: 1, md: 1 },
-
-              width: "100%",
+              boxShadow: 3,
 
               borderRadius: 6,
-
-              textAlign: "center",
-              textTransform: "capitalize",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            Loan Status Distribution
-          </Typography>
-          <PieChart
-            sx={{ width: "100%" }}
-            series={[
-              {
-                data: pieChartData,
-                innerRadius: 90,
-                highlightScope: { fade: "global", highlight: "item" },
-                faded: {
-                  innerRadius: 90,
-                  additionalRadius: -30,
-                  color: "gray",
-                },
-              },
-            ]}
-            height={300}
-            slotProps={{
-              legend: {
-                direction: "row",
-                position: {
-                  vertical: "bottom",
-                  horizontal: "middle",
-                },
-
-                sx: {
-                  mt: 4,
-                },
-              },
-            }}
-          />
-        </Grid>
-        <Grid
-          size={{ xs: 12, sm: 6, md: 6, lg: 6 }}
-          sx={{
-            boxShadow: 3,
-            bgcolor: "#b2ebf2",
-            borderRadius: 6,
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-end",
-              height: "100%",
+              padding: 2,
             }}
           >
             <Typography
               variant="h4"
               sx={{
-                mb: 0,
+                mb: { xs: 1, md: 1 },
 
                 width: "100%",
 
@@ -385,107 +306,174 @@ export default function DashboardData() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                mt: 2,
               }}
             >
-              Amount Details
+              Loan Status Distribution
             </Typography>
-            <BarChart
+            <PieChart
+              sx={{ width: "100%" }}
+              series={[
+                {
+                  data: pieChartData,
+                  innerRadius: 90,
+                  highlightScope: { fade: "global", highlight: "item" },
+                  faded: {
+                    innerRadius: 90,
+                    additionalRadius: -30,
+                    color: "gray",
+                  },
+                },
+              ]}
+              height={300}
+              slotProps={{
+                legend: {
+                  direction: "row",
+                  position: {
+                    vertical: "bottom",
+                    horizontal: "middle",
+                  },
+
+                  sx: {
+                    mt: 4,
+                  },
+                },
+              }}
+            />
+          </Card>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+          <Card
+            sx={{
+              boxShadow: 3,
+
+              borderRadius: 6,
+            }}
+          >
+            <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "flex-end",
                 height: "100%",
               }}
-              xAxis={[
-                {
-                  id: "barCategories",
-                  data: [
-                    "Pending Amount",
-                    "Rejected Amount",
-                    "Approved Amount",
-                    "Total Amount",
-                  ],
-                  scaleType: "band",
-                },
-              ]}
-              height={380}
-              series={[
-                {
-                  data: [
-                    totals.pending,
-                    totals.rejected,
-                    totals.approved,
-                    totals.pending + totals.rejected + totals.approved,
-                  ],
-                  color: blue[500],
-                },
-              ]}
-            />
-          </Box>
+            >
+              <Typography
+                variant="h4"
+                sx={{
+                  mb: 0,
+
+                  width: "100%",
+
+                  borderRadius: 6,
+
+                  textAlign: "center",
+                  textTransform: "capitalize",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  mt: 2,
+                }}
+              >
+                Amount Details
+              </Typography>
+              <BarChart
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-end",
+                  height: "100%",
+                }}
+                xAxis={[
+                  {
+                    id: "barCategories",
+                    data: [
+                      "Pending Amount",
+                      "Rejected Amount",
+                      "Approved Amount",
+                      "Total Amount",
+                    ],
+                    scaleType: "band",
+                  },
+                ]}
+                height={380}
+                series={[
+                  {
+                    data: [
+                      totals.pending,
+                      totals.rejected,
+                      totals.approved,
+                      totals.pending + totals.rejected + totals.approved,
+                    ],
+                    color: theme.palette.customPurple.main,
+                  },
+                ]}
+              />
+            </Box>
+          </Card>
         </Grid>
-        <Grid
-          size={{ xs: 12, sm: 6, md: 6, lg: 6 }}
-          sx={{
-            boxShadow: 3,
-            bgcolor: "#b2ebf2",
-            borderRadius: 6,
-          }}
-        >
-          <Box
+        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+          <Card
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-end",
-              height: "100%",
+              boxShadow: 3,
+
+              borderRadius: 6,
             }}
           >
-            <Typography
-              variant="h4"
+            <Box
               sx={{
-                mb: 0,
-
-                width: "100%",
-
-                borderRadius: 6,
-
-                textAlign: "center",
-                textTransform: "capitalize",
                 display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                mt: 2,
+                flexDirection: "column",
+                justifyContent: "flex-end",
+                height: "100%",
               }}
             >
-              Amount Details
-            </Typography>
-            <LineChart
-              height={300}
-              xAxis={[
-                {
-                  data: monthWiseStats.map((item) => item.month),
-                  scaleType: "band",
-                },
-              ]}
-              series={[
-                {
-                  data: monthWiseStats.map((item) => item.approved),
-                  label: "Approved",
-                  color: green[500],
-                },
-                {
-                  data: monthWiseStats.map((item) => item.rejected),
-                  label: "Rejected",
-                  color: red[500],
-                },
-                {
-                  data: monthWiseStats.map((item) => item.pending),
-                  label: "Pending",
-                  color: orange[500],
-                },
-              ]}
-            />
-          </Box>
+              <Typography
+                variant="h4"
+                sx={{
+                  mb: 0,
+
+                  width: "100%",
+
+                  borderRadius: 6,
+
+                  textAlign: "center",
+                  textTransform: "capitalize",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  mt: 2,
+                }}
+              >
+                Amount Details
+              </Typography>
+              <LineChart
+                height={300}
+                xAxis={[
+                  {
+                    data: monthWiseStats.map((item) => item.month),
+                    scaleType: "band",
+                  },
+                ]}
+                series={[
+                  {
+                    data: monthWiseStats.map((item) => item.approved),
+                    label: "Approved",
+                    color: theme.palette.customPurple.main,
+                  },
+                  {
+                    data: monthWiseStats.map((item) => item.rejected),
+                    label: "Rejected",
+                    color: theme.palette.customPink.main,
+                  },
+                  {
+                    data: monthWiseStats.map((item) => item.pending),
+                    label: "Pending",
+                    color: theme.palette.customBlue.main,
+                  },
+                ]}
+              />
+            </Box>
+          </Card>
         </Grid>
       </Grid>
     </>
