@@ -9,7 +9,7 @@ import DashboardLayoutBranding from "./pages/dashboard";
 import NotFound from "./pages/notFound";
 import { UserProvider } from "./context/store.jsx";
 import "./index.css";
-import "./app.css";
+import "./App.css";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "./lib/theme";
 
