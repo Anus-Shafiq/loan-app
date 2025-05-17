@@ -10,17 +10,21 @@ const NotFound: React.FC = () => {
     <Result
       status="404"
       title={
-        <Typography variant="h3" sx={{ fontWeight: "bold" }}>
+        <Typography variant="h3" sx={{ fontWeight: "bold" }} color="primary">
           404
         </Typography>
       }
       subTitle={
-        <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+        <Typography variant="body1" sx={{ fontWeight: "bold" }} color="primary">
           Sorry, the page you visited does not exist.
         </Typography>
       }
       extra={
-        <Button onClick={() => navigate("/dashboard")} color="secondary">
+        <Button
+          onClick={() => navigate("/dashboard")}
+          color="primary"
+          variant="contained"
+        >
           Back App
         </Button>
       }
