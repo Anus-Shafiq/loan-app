@@ -3,9 +3,6 @@ import * as React from "react";
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { createTheme } from "@mui/material/styles";
-import { useTheme as useMuiTheme } from "@mui/material/styles";
-import { CssBaseline, ThemeProvider } from "@mui/material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import DescriptionIcon from "@mui/icons-material/Description";
@@ -21,22 +18,6 @@ import { theme } from "@/lib/theme";
 import LoanStepperForm from "./loanForm";
 import DashboardData from "../components/dashboarddata";
 import AllUserData from "./allUserTable";
-import { CssVarsProvider, useColorScheme } from "@mui/material/styles";
-// const demoTheme = createTheme({
-//   cssVariables: {
-//     colorSchemeSelector: "data-toolpad-color-scheme",
-//   },
-//   colorSchemes: { light: true, dark: true },
-//   breakpoints: {
-//     values: {
-//       xs: 0,
-//       sm: 600,
-//       md: 600,
-//       lg: 1200,
-//       xl: 1536,
-//     },
-//   },
-// });
 
 function DemoPageContent({ pathname }) {
   return (
@@ -129,10 +110,6 @@ function DashboardLayoutBranding(props) {
 
   const { window } = props;
 
-  const { mode, setMode } = useColorScheme();
-
-  setMode("dark");
-
   const router = React.useMemo(
     () => ({
       pathname: location.pathname,
@@ -146,29 +123,28 @@ function DashboardLayoutBranding(props) {
 
   return (
     // preview-start
-    //
-    <CssVarsProvider theme={theme}>
-      <AppProvider
-        theme={theme}
-        navigation={NAVIGATION}
-        branding={{
-          logo: "",
-          title: "Swift Loan",
-          homeUrl: "/toolpad/core/introduction",
+
+    <AppProvider
+      theme={theme}
+      navigation={NAVIGATION}
+      branding={{
+        logo: "",
+        title: "Swift Loan",
+        homeUrl: "/toolpad/core/introduction",
+      }}
+      router={router}
+      window={demoWindow}
+    >
+      <DashboardLayout
+        slots={{
+          toolbarAccount: () => null,
+          sidebarFooter: SidebarFooterAccount,
         }}
-        router={router}
-        window={demoWindow}
       >
-        <DashboardLayout
-          slots={{
-            toolbarAccount: () => null,
-            sidebarFooter: SidebarFooterAccount,
-          }}
-        >
-          <DemoPageContent pathname={router.pathname} />
-        </DashboardLayout>
-      </AppProvider>
-    </CssVarsProvider>
+        <DemoPageContent pathname={router.pathname} />
+      </DashboardLayout>
+    </AppProvider>
+
     // preview-end
   );
 }

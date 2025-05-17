@@ -72,7 +72,12 @@ export default function AllUserData() {
   return (
     <>
       <Box>
-        <Typography variant="h4" gutterBottom sx={{ fontWeight: "bold" }}>
+        <Typography
+          variant="h4"
+          gutterBottom
+          sx={{ fontWeight: "bold" }}
+          color="primary"
+        >
           All Users
         </Typography>
       </Box>

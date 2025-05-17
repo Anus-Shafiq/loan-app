@@ -34,7 +34,7 @@ export default function DashboardData() {
   const [monthWiseStats, setMonthWiseStats] = useState([]);
   const theme = useTheme();
 
-  useLoanRealtime(setAllData);
+  useLoanRealtime({ table: "loanDetails", setData: setAllData });
 
   useEffect(() => {
     if (loanData) {
@@ -155,9 +155,10 @@ export default function DashboardData() {
     <>
       <Typography
         variant="h4"
+        color="primary"
         sx={{
           width: "95%",
-
+          fontWeight: "bold",
           borderRadius: 6,
           padding: 2,
           textAlign: "start",

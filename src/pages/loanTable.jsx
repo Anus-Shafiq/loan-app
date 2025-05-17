@@ -104,19 +104,19 @@ export default function DataTable() {
       field: "fullName",
       headerName: "Name",
       minWidth: 180,
-      renderCell: (params) => {
-        const value = params.value;
-
-        return (
-          <Button
-            onClick={() => handleOpenModal(params.row)}
-            variant="extra"
-            disableRipple
-          >
-            {params.value}
-          </Button>
-        );
-      },
+      ...(admin && {
+        renderCell: (params) => {
+          return (
+            <Button
+              onClick={() => handleOpenModal(params.row)}
+              variant="extra"
+              disableRipple
+            >
+              {params.value}
+            </Button>
+          );
+        },
+      }),
     },
 
     {
@@ -128,11 +128,11 @@ export default function DataTable() {
         const value = params.value?.toLowerCase() || "";
         const color =
           value === "approved"
-            ? "success"
+            ? "chipSuccess"
             : value === "rejected"
-              ? "error"
+              ? "chipError"
               : value === "pending"
-                ? "warning"
+                ? "chipWarning"
                 : "default";
         return (
           <Chip
@@ -218,7 +218,7 @@ export default function DataTable() {
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: { xs: "90%", sm: 1288, md: 1400 },
-    bgcolor: (theme) => theme.palette.background.paper,
+    bgcolor: "background.paper",
     boxShadow: 24,
     p: 4,
     borderRadius: 2,
@@ -242,8 +242,13 @@ export default function DataTable() {
   return (
     <>
       <Box>
-        <Typography variant="h4" gutterBottom sx={{ fontWeight: "bold" }}>
-          Loan Requests
+        <Typography
+          variant="h4"
+          gutterBottom
+          sx={{ fontWeight: "bold" }}
+          color="primary"
+        >
+          {admin ? "Loan Details" : "My Loan Details"}
         </Typography>
       </Box>
 
@@ -268,10 +273,8 @@ export default function DataTable() {
                 <Box
                   sx={{
                     ...sectionStyle,
-                    bgcolor: (theme) =>
-                      theme.palette.mode === "light" ? blue[50] : blue[700],
-                    color: (theme) =>
-                      theme.palette.mode === "light" ? "#000000" : "#ffffff",
+                    bgcolor: "customBlue.main",
+                    color: "customBlue.contrastText",
                   }}
                 >
                   <Typography
@@ -305,10 +308,8 @@ export default function DataTable() {
                 <Box
                   sx={{
                     ...sectionStyle,
-                    bgcolor: (theme) =>
-                      theme.palette.mode === "light" ? green[50] : green[700],
-                    color: (theme) =>
-                      theme.palette.mode === "light" ? "#000000" : "#ffffff",
+                    bgcolor: "customPink.main",
+                    color: "customPink.contrastText",
                   }}
                 >
                   <Typography
@@ -344,10 +345,8 @@ export default function DataTable() {
                 <Box
                   sx={{
                     ...sectionStyle,
-                    bgcolor: (theme) =>
-                      theme.palette.mode === "light" ? yellow[50] : yellow[700],
-                    color: (theme) =>
-                      theme.palette.mode === "light" ? "#000000" : "#ffffff",
+                    bgcolor: "customYellow.main",
+                    color: "customYellow.contrastText",
                   }}
                 >
                   <Typography
@@ -382,10 +381,8 @@ export default function DataTable() {
                 <Box
                   sx={{
                     ...sectionStyle,
-                    bgcolor: (theme) =>
-                      theme.palette.mode === "light" ? purple[50] : purple[700],
-                    color: (theme) =>
-                      theme.palette.mode === "light" ? "#000000" : "#ffffff",
+                    bgcolor: "customPurple.main",
+                    color: "customPurple.contrastText",
                   }}
                 >
                   <Typography
@@ -398,11 +395,11 @@ export default function DataTable() {
                     label={selectedRow.status?.toLowerCase() || "unknown"}
                     color={
                       selectedRow.status?.toLowerCase() === "approved"
-                        ? "success"
+                        ? "chipSuccess"
                         : selectedRow.status?.toLowerCase() === "rejected"
-                          ? "error"
+                          ? "chipError"
                           : selectedRow.status?.toLowerCase() === "pending"
-                            ? "warning"
+                            ? "chipWarning"
                             : "default"
                     }
                     sx={{

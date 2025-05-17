@@ -1,145 +1,38 @@
-// // theme.ts
-// import { createTheme } from "@mui/material/styles";
-// import { alpha } from "@mui/material";
-
-// export const theme = createTheme({
-//   cssVariables: {
-//     colorSchemeSelector: "data-toolpad-color-scheme",
-//   },
-//   colorSchemes: {
-//     light: {
-//       palette: {
-//         mode: "light",
-//         primary: { main: "#6200ea" },
-//         success: {
-//           main: "#4caf50",
-//           contrastText: "#1b5e20", // dark green text
-//         },
-//         error: {
-//           main: "#f44336",
-//           contrastText: "#b71c1c", // dark red text
-//         },
-//         warning: {
-//           main: "#ff9800",
-//           contrastText: "#e65100", // deep orange
-//         },
-//         info: {
-//           main: "#2196f3",
-//           contrastText: "#0d47a1", // dark blue
-//         },
-//         background: {
-//           default: "#f5f5f5",
-//           paper: "#ffffff",
-//         },
-//         text: {
-//           primary: "#000000",
-//           secondary: "#555555",
-//         },
-//       },
-//       components: {
-//         MuiChip: {
-//           styleOverrides: {
-//             root: ({ ownerState, theme }) => ({
-//               ...(ownerState.color === "success" && {
-//                 backgroundColor: alpha(theme.palette.success.main, 0.15),
-//                 color: theme.palette.success.contrastText,
-//               }),
-//               ...(ownerState.color === "error" && {
-//                 backgroundColor: alpha(theme.palette.error.main, 0.15),
-//                 color: theme.palette.error.contrastText,
-//               }),
-//               ...(ownerState.color === "warning" && {
-//                 backgroundColor: alpha(theme.palette.warning.main, 0.15),
-//                 color: theme.palette.warning.contrastText,
-//               }),
-//               ...(ownerState.color === "info" && {
-//                 backgroundColor: alpha(theme.palette.info.main, 0.15),
-//                 color: theme.palette.info.contrastText,
-//               }),
-//             }),
-//           },
-//         },
-//       },
-//     },
-//     dark: {
-//       palette: {
-//         mode: "dark",
-//         primary: { main: "#bb86fc" },
-//         success: {
-//           main: "#388e3c", // deeper green
-//           contrastText: "#ffffff", // light text
-//         },
-//         error: {
-//           main: "#d32f2f",
-//           contrastText: "#ffffff",
-//         },
-//         warning: {
-//           main: "#f57c00",
-//           contrastText: "#ffffff",
-//         },
-//         info: {
-//           main: "#1976d2",
-//           contrastText: "#ffffff",
-//         },
-//         background: {
-//           default: "#121212",
-//           paper: "#1e1e1e",
-//         },
-//         text: {
-//           primary: "#ffffff",
-//           secondary: "#cccccc",
-//         },
-//       },
-//       components: {
-//         MuiChip: {
-//           styleOverrides: {
-//             root: ({ ownerState, theme }) => ({
-//               ...(ownerState.color === "success" && {
-//                 backgroundColor: alpha(theme.palette.success.main, 0.8),
-//                 color: theme.palette.success.contrastText,
-//               }),
-//               ...(ownerState.color === "error" && {
-//                 backgroundColor: alpha(theme.palette.error.main, 0.8),
-//                 color: theme.palette.error.contrastText,
-//               }),
-//               ...(ownerState.color === "warning" && {
-//                 backgroundColor: alpha(theme.palette.warning.main, 0.8),
-//                 color: theme.palette.warning.contrastText,
-//               }),
-//               ...(ownerState.color === "info" && {
-//                 backgroundColor: alpha(theme.palette.info.main, 0.8),
-//                 color: theme.palette.info.contrastText,
-//               }),
-//             }),
-//           },
-//         },
-//       },
-//     },
-//   },
-// });
-
 import { createTheme, Palette, PaletteOptions } from "@mui/material/styles";
-import { alpha } from "@mui/material";
-import { purple, pink, blue, yellow } from "@mui/material/colors";
+import {
+  purple,
+  pink,
+  blue,
+  yellow,
+  orange,
+  green,
+  cyan,
+  red,
+  teal,
+  grey,
+} from "@mui/material/colors";
 
+// Extend custom colors
 declare module "@mui/material/styles" {
   interface Palette {
     customPink: Palette["primary"];
     customPurple: Palette["primary"];
     customBlue: Palette["primary"];
     customYellow: Palette["primary"];
-  }
-  interface PaletteOptions {
-    customPurple?: PaletteOptions["primary"];
+    chipError: Palette["primary"];
+    chipSuccess: Palette["primary"];
+    chipWarning: Palette["primary"];
+    chipInfo: Palette["primary"];
   }
   interface PaletteOptions {
     customPink?: PaletteOptions["primary"];
-  }
-  interface PaletteOptions {
+    customPurple?: PaletteOptions["primary"];
     customBlue?: PaletteOptions["primary"];
-  }
-  interface PaletteOptions {
     customYellow?: PaletteOptions["primary"];
+    chipError?: PaletteOptions["primary"];
+    chipSuccess?: PaletteOptions["primary"];
+    chipWarning?: PaletteOptions["primary"];
+    chipInfo?: PaletteOptions["primary"];
   }
 }
 
@@ -151,38 +44,57 @@ export const theme = createTheme({
     light: {
       palette: {
         mode: "light",
-        primary: { main: purple[500] }, // Default primary color
+        primary: {
+          main: teal.A700,
+          contrastText: "#ffffff",
+        },
         success: {
-          main: purple[50], // Light purple for success background
-          contrastText: purple[500], // Darker purple for text
+          main: green[100],
+          contrastText: green[500],
         },
         error: {
-          main: pink[50], // Light pink for error background
-          contrastText: pink[500], // Darker pink for text
+          main: red[100],
+          contrastText: red[500],
         },
         warning: {
-          main: blue[50], // Light blue for warning background
-          contrastText: blue[500], // Darker blue for text
+          main: blue[50],
+          contrastText: blue[700],
         },
         info: {
           main: "#2196f3",
-          contrastText: "#0d47a1", // Default info colors
+          contrastText: "#0d47a1",
         },
         customPink: {
-          main: pink[400],
-          contrastText: pink[700],
+          main: pink[100],
+          contrastText: "#000000",
         },
         customPurple: {
-          main: purple[400],
-          contrastText: purple[700],
+          main: purple[100],
+          contrastText: "#000000",
         },
         customBlue: {
-          main: blue[400],
-          contrastText: blue[500],
+          main: blue[100],
+          contrastText: "#000000",
         },
         customYellow: {
-          main: yellow[400],
-          contrastText: blue[500],
+          main: yellow[100],
+          contrastText: "#000000",
+        },
+        chipError: {
+          main: red[100],
+          contrastText: red[900],
+        },
+        chipSuccess: {
+          main: green[100],
+          contrastText: green[900],
+        },
+        chipWarning: {
+          main: yellow[200],
+          contrastText: yellow[900],
+        },
+        chipInfo: {
+          main: cyan[500],
+          contrastText: "#ffffff",
         },
         background: {
           default: "#f5f5f5",
@@ -193,84 +105,61 @@ export const theme = createTheme({
           secondary: "#555555",
         },
       },
-      components: {
-        MuiChip: {
-          styleOverrides: {
-            root: ({ ownerState, theme }) => ({
-              ...(ownerState.color === "success" && {
-                backgroundColor: theme.palette.success.main,
-                color: theme.palette.success.contrastText,
-              }),
-              ...(ownerState.color === "error" && {
-                backgroundColor: theme.palette.error.main,
-                color: theme.palette.error.contrastText,
-              }),
-              ...(ownerState.color === "warning" && {
-                backgroundColor: theme.palette.warning.main,
-                color: theme.palette.warning.contrastText,
-              }),
-              ...(ownerState.color === "info" && {
-                backgroundColor: theme.palette.info.main,
-                color: theme.palette.info.contrastText,
-              }),
-            }),
-          },
-        },
-        MuiButton: {
-          styleOverrides: {
-            root: ({ ownerState, theme }) => ({
-              ...(ownerState.color === "success" && {
-                backgroundColor: theme.palette.success.main,
-                color: theme.palette.success.contrastText,
-                "&:hover": {
-                  backgroundColor: alpha(theme.palette.success.main, 0.8),
-                },
-              }),
-              ...(ownerState.color === "error" && {
-                backgroundColor: theme.palette.error.main,
-                color: theme.palette.error.contrastText,
-                "&:hover": {
-                  backgroundColor: alpha(theme.palette.error.main, 0.8),
-                },
-              }),
-              ...(ownerState.color === "warning" && {
-                backgroundColor: theme.palette.warning.main,
-                color: theme.palette.warning.contrastText,
-                "&:hover": {
-                  backgroundColor: alpha(theme.palette.warning.main, 0.8),
-                },
-              }),
-              ...(ownerState.color === "info" && {
-                backgroundColor: theme.palette.info.main,
-                color: theme.palette.info.contrastText,
-                "&:hover": {
-                  backgroundColor: alpha(theme.palette.info.main, 0.8),
-                },
-              }),
-            }),
-          },
-        },
-      },
     },
     dark: {
       palette: {
         mode: "dark",
-        primary: { main: purple[200] }, // Lighter primary for dark mode
+        primary: {
+          main: teal.A100,
+          contrastText: "#ffffff",
+        },
         success: {
-          main: purple[500], // Darker purple for success background
-          contrastText: purple[50], // Light purple for text
+          main: green[500],
+          contrastText: green[50],
         },
         error: {
-          main: pink[500], // Darker pink for error background
-          contrastText: pink[50], // Light pink for text
+          main: red[500],
+          contrastText: red[50],
         },
         warning: {
-          main: blue[500], // Darker blue for warning background
-          contrastText: blue[50], // Light blue for text
+          main: blue[500],
+          contrastText: "#ffffff",
         },
         info: {
           main: "#1976d2",
-          contrastText: "#bbdefb", // Lighter blue for info text
+          contrastText: "#ffffff",
+        },
+        customPink: {
+          main: pink[400],
+          contrastText: "#ffffff",
+        },
+        customPurple: {
+          main: purple[300],
+          contrastText: "#ffffff",
+        },
+        customBlue: {
+          main: blue[400],
+          contrastText: "#ffffff",
+        },
+        customYellow: {
+          main: yellow[400],
+          contrastText: "#ffffff",
+        },
+        chipError: {
+          main: red[500], // Lighter blue for error Chip
+          contrastText: red[50],
+        },
+        chipSuccess: {
+          main: green[500], // Lighter green for success Chip
+          contrastText: green[50],
+        },
+        chipWarning: {
+          main: yellow[700], // Lighter orange for warning Chip
+          contrastText: yellow[50],
+        },
+        chipInfo: {
+          main: cyan[300], // Lighter cyan for info Chip
+          contrastText: "#ffffff",
         },
         background: {
           default: "#121212",
@@ -279,64 +168,6 @@ export const theme = createTheme({
         text: {
           primary: "#ffffff",
           secondary: "#cccccc",
-        },
-      },
-      components: {
-        MuiChip: {
-          styleOverrides: {
-            root: ({ ownerState, theme }) => ({
-              ...(ownerState.color === "success" && {
-                backgroundColor: alpha(theme.palette.success.main, 0.3), // Lower alpha for dark mode
-                color: theme.palette.success.contrastText,
-              }),
-              ...(ownerState.color === "error" && {
-                backgroundColor: alpha(theme.palette.error.main, 0.3),
-                color: theme.palette.error.contrastText,
-              }),
-              ...(ownerState.color === "warning" && {
-                backgroundColor: alpha(theme.palette.warning.main, 0.3),
-                color: theme.palette.warning.contrastText,
-              }),
-              ...(ownerState.color === "info" && {
-                backgroundColor: alpha(theme.palette.info.main, 0.3),
-                color: theme.palette.info.contrastText,
-              }),
-            }),
-          },
-        },
-        MuiButton: {
-          styleOverrides: {
-            root: ({ ownerState, theme }) => ({
-              ...(ownerState.color === "success" && {
-                backgroundColor: theme.palette.success.main,
-                color: theme.palette.success.contrastText,
-                "&:hover": {
-                  backgroundColor: alpha(theme.palette.success.main, 0.9),
-                },
-              }),
-              ...(ownerState.color === "error" && {
-                backgroundColor: theme.palette.error.main,
-                color: theme.palette.error.contrastText,
-                "&:hover": {
-                  backgroundColor: alpha(theme.palette.error.main, 0.9),
-                },
-              }),
-              ...(ownerState.color === "warning" && {
-                backgroundColor: theme.palette.warning.main,
-                color: theme.palette.warning.contrastText,
-                "&:hover": {
-                  backgroundColor: alpha(theme.palette.warning.main, 0.9),
-                },
-              }),
-              ...(ownerState.color === "info" && {
-                backgroundColor: theme.palette.info.main,
-                color: theme.palette.info.contrastText,
-                "&:hover": {
-                  backgroundColor: alpha(theme.palette.info.main, 0.9),
-                },
-              }),
-            }),
-          },
         },
       },
     },

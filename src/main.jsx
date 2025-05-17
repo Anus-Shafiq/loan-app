@@ -9,28 +9,36 @@ import DashboardLayoutBranding from "./pages/dashboard";
 import NotFound from "./pages/notFound";
 import { UserProvider } from "./context/store.jsx";
 import "./index.css";
+import "./app.css";
+import { ThemeProvider } from "@mui/material";
+import { theme } from "./lib/theme";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
-      <UserProvider>
-        <Routes>
-          <Route path="/" element={<LoginForm />} />
-          <Route path="/sign-up" element={<SignUpForm />} />
-          <Route path="/login" element={<LoginForm />} />
-          <Route path="/forgot-password" element={<ForgotPasswordForm />} />
-          <Route path="/update-password" element={<UpdatePasswordForm />} />
-          <Route path="/dashboard" element={<DashboardLayoutBranding />} />
-          <Route path="/Loan-Requests" element={<DashboardLayoutBranding />} />
-          <Route
-            path="/My-Loan-Requests"
-            element={<DashboardLayoutBranding />}
-          />
-          <Route path="/New-Loan" element={<DashboardLayoutBranding />} />
-          <Route path="/users" element={<DashboardLayoutBranding />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </UserProvider>
+      <ThemeProvider theme={theme}>
+        <UserProvider>
+          <Routes>
+            <Route path="/" element={<LoginForm />} />
+            <Route path="/sign-up" element={<SignUpForm />} />
+            <Route path="/login" element={<LoginForm />} />
+            <Route path="/forgot-password" element={<ForgotPasswordForm />} />
+            <Route path="/update-password" element={<UpdatePasswordForm />} />
+            <Route path="/dashboard" element={<DashboardLayoutBranding />} />
+            <Route
+              path="/Loan-Requests"
+              element={<DashboardLayoutBranding />}
+            />
+            <Route
+              path="/My-Loan-Requests"
+              element={<DashboardLayoutBranding />}
+            />
+            <Route path="/New-Loan" element={<DashboardLayoutBranding />} />
+            <Route path="/users" element={<DashboardLayoutBranding />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </UserProvider>
+      </ThemeProvider>
     </BrowserRouter>
   </StrictMode>
 );
