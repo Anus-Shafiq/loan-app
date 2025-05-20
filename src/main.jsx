@@ -12,33 +12,39 @@ import "./index.css";
 import "./App.css";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "./lib/theme";
+import ErrorBoundary from "./lib/boundary";
+import { CopilotKit } from "@copilotkit/react-core";
+
+const copilotApi = import.meta.env.VITE_COPILOTKIT_KEY;
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <BrowserRouter>
-      <ThemeProvider theme={theme}>
-        <UserProvider>
-          <Routes>
-            <Route path="/" element={<LoginForm />} />
-            <Route path="/sign-up" element={<SignUpForm />} />
-            <Route path="/login" element={<LoginForm />} />
-            <Route path="/forgot-password" element={<ForgotPasswordForm />} />
-            <Route path="/update-password" element={<UpdatePasswordForm />} />
-            <Route path="/dashboard" element={<DashboardLayoutBranding />} />
-            <Route
-              path="/Loan-Requests"
-              element={<DashboardLayoutBranding />}
-            />
-            <Route
-              path="/My-Loan-Requests"
-              element={<DashboardLayoutBranding />}
-            />
-            <Route path="/New-Loan" element={<DashboardLayoutBranding />} />
-            <Route path="/users" element={<DashboardLayoutBranding />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </UserProvider>
-      </ThemeProvider>
-    </BrowserRouter>
-  </StrictMode>
+  <CopilotKit publicApiKey={copilotApi}>
+    <StrictMode>
+      <BrowserRouter>
+        <ThemeProvider theme={theme}>
+          <UserProvider>
+            <Routes>
+              <Route path="/" element={<LoginForm />} />
+              <Route path="/sign-up" element={<SignUpForm />} />
+              <Route path="/login" element={<LoginForm />} />
+              <Route path="/forgot-password" element={<ForgotPasswordForm />} />
+              <Route path="/update-password" element={<UpdatePasswordForm />} />
+              <Route path="/dashboard" element={<DashboardLayoutBranding />} />
+              <Route
+                path="/Loan-Requests"
+                element={<DashboardLayoutBranding />}
+              />
+              <Route
+                path="/My-Loan-Requests"
+                element={<DashboardLayoutBranding />}
+              />
+              <Route path="/New-Loan" element={<DashboardLayoutBranding />} />
+              <Route path="/users" element={<DashboardLayoutBranding />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </UserProvider>
+        </ThemeProvider>
+      </BrowserRouter>
+    </StrictMode>
+  </CopilotKit>
 );

@@ -10,29 +10,20 @@ import {
   Grid,
   Divider,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DoneIcon from "@mui/icons-material/Done";
 import CloseIcon from "@mui/icons-material/Close";
 import { supabase } from "@/lib/client";
-import useLoanRealtime from "../lib/useLoanRealtime";
+
 import Table from "../components/table";
 import { useUser } from "@/context/store";
-import { blue, green, yellow, purple } from "@mui/material/colors";
 
 export default function DataTable() {
   const { user, loading, admin, loanData } = useUser();
-  const [usersData, setUsersData] = useState([]);
+
   const [openModal, setOpenModal] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
-
-  useEffect(() => {
-    if (loanData) {
-      setUsersData(loanData);
-    }
-  }, [loanData]);
-
-  useLoanRealtime({ table: "loanDetails", setData: setUsersData });
 
   const handleProcessRowUpdate = async (newRow, oldRow) => {
     const { error } = await supabase
@@ -253,7 +244,7 @@ export default function DataTable() {
       </Box>
 
       <Table
-        rowsData={usersData}
+        rowsData={loanData}
         columnsData={columns}
         loading={loading}
         handleProcessRowUpdate={handleProcessRowUpdate}

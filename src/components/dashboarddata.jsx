@@ -1,6 +1,6 @@
 import { useUser } from "@/context/store";
 import { useEffect, useState, useMemo } from "react";
-import useLoanRealtime from "../lib/useLoanRealtime";
+
 import { Grid, Box, Typography, Card } from "@mui/material";
 import { LineChart } from "@mui/x-charts/LineChart";
 import CardSection from "./card";
@@ -26,30 +26,20 @@ import { format } from "date-fns";
 import { useTheme } from "@mui/material";
 
 export default function DashboardData() {
-  const [allData, setAllData] = useState([]);
   const [total, setTotal] = useState(0);
-  const [isLoading, setLoading] = useState(true);
+
   const [statusCounts, setStatusCounts] = useState({});
   const { user, loading, admin, loanData } = useUser();
   const [monthWiseStats, setMonthWiseStats] = useState([]);
   const theme = useTheme();
 
-  useLoanRealtime({ table: "loanDetails", setData: setAllData });
-
   useEffect(() => {
-    if (loanData) {
-      setAllData(loanData);
-      setLoading(false);
-    }
-  }, [loanData]);
-
-  useEffect(() => {
-    if (allData.length) {
-      setTotal(allData.length);
+    if (loanData.length) {
+      setTotal(loanData.length);
       const statsMap = {};
       const counts = {};
 
-      allData.forEach((item) => {
+      loanData.forEach((item) => {
         const date = new Date(item.created_at);
         const monthKey = format(date, "yyyy-MM");
         const monthLabel = format(date, "MMM");
@@ -83,11 +73,11 @@ export default function DashboardData() {
       setMonthWiseStats(sortedStats);
       setStatusCounts(counts);
     }
-  }, [allData]);
+  }, [loanData]);
 
   const totals = useMemo(
     () =>
-      allData.reduce(
+      loanData.reduce(
         (acc, item) => {
           if (item.status === "approved") acc.approved += item.loanAmount;
           else if (item.status === "rejected") acc.rejected += item.loanAmount;
@@ -96,7 +86,7 @@ export default function DashboardData() {
         },
         { approved: 0, rejected: 0, pending: 0 }
       ),
-    [allData]
+    [loanData]
   );
 
   const pieChartData = Object.entries(statusCounts).map(
@@ -106,13 +96,13 @@ export default function DashboardData() {
 
       switch (status.toLowerCase()) {
         case "approved":
-          color = theme.palette.customPurple.main;
+          color = theme.palette.chartPurple.main;
           break;
         case "pending":
-          color = theme.palette.customBlue.main; // orange
+          color = theme.palette.chartBlue.main; // orange
           break;
         case "rejected":
-          color = theme.palette.customPink.main; // red
+          color = theme.palette.chartPink.main; // red
           break;
       }
 
@@ -130,11 +120,11 @@ export default function DashboardData() {
       id: pieChartData.length,
       value: total,
       label: "Total",
-      color: theme.palette.customYellow.main, // blue
+      color: theme.palette.chartYellow.main, // blue
     });
   }
 
-  if (isLoading || loading) {
+  if (loading) {
     return (
       <Box
         sx={{
@@ -188,7 +178,7 @@ export default function DashboardData() {
             sx={{ height: "100%" }}
             title={"active loans"}
             titleValue={
-              isLoading ? (
+              loading ? (
                 <PuffLoader size={32} />
               ) : (
                 (statusCounts.approved || 0) +
@@ -207,7 +197,7 @@ export default function DashboardData() {
                   fontWeight: "bold",
                 }}
               >
-                {isLoading ? (
+                {loading ? (
                   <PulseLoader size={10} />
                 ) : statusCounts.approved > 0 ? (
                   "Good Standing"
@@ -224,7 +214,7 @@ export default function DashboardData() {
             sx={{ height: "100%" }}
             title={"Approved loans"}
             titleValue={
-              isLoading ? <PuffLoader size={32} /> : statusCounts.approved || 0
+              loading ? <PuffLoader size={32} /> : statusCounts.approved || 0
             }
             bgcolor={pink[50]}
             icon={
@@ -235,11 +225,7 @@ export default function DashboardData() {
             }
             status={"total amount"}
             statusValue={
-              isLoading ? (
-                <PulseLoader size={10} />
-              ) : (
-                `₨ ${totals.approved || 0}`
-              )
+              loading ? <PulseLoader size={10} /> : `₨ ${totals.approved || 0}`
             }
           />
         </Grid>
@@ -249,7 +235,7 @@ export default function DashboardData() {
             sx={{ height: "100%" }}
             title={"Pending Requests"}
             titleValue={
-              isLoading ? <PuffLoader size={32} /> : statusCounts.pending || 0
+              loading ? <PuffLoader size={32} /> : statusCounts.pending || 0
             }
             bgcolor={purple[50]}
             icon={
@@ -257,7 +243,7 @@ export default function DashboardData() {
             }
             status={"Pending amount"}
             statusValue={
-              isLoading ? <PulseLoader size={10} /> : `₨ ${totals.pending || 0}`
+              loading ? <PulseLoader size={10} /> : `₨ ${totals.pending || 0}`
             }
           />
         </Grid>
@@ -267,7 +253,7 @@ export default function DashboardData() {
             sx={{ height: "100%" }}
             title={"Rejected loans"}
             titleValue={
-              isLoading ? <PuffLoader size={32} /> : statusCounts.rejected || 0
+              loading ? <PuffLoader size={32} /> : statusCounts.rejected || 0
             }
             bgcolor={deepPurple[50]}
             icon={
@@ -275,11 +261,7 @@ export default function DashboardData() {
             }
             status={"rejected amount"}
             statusValue={
-              isLoading ? (
-                <PulseLoader size={10} />
-              ) : (
-                `₨ ${totals.rejected || 0}`
-              )
+              loading ? <PulseLoader size={10} /> : `₨ ${totals.rejected || 0}`
             }
           />
         </Grid>
@@ -377,11 +359,9 @@ export default function DashboardData() {
               >
                 Amount Details
               </Typography>
+
               <BarChart
                 sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "flex-end",
                   height: "100%",
                 }}
                 xAxis={[
@@ -394,20 +374,49 @@ export default function DashboardData() {
                       "Total Amount",
                     ],
                     scaleType: "band",
+                    categoryGapRatio: 0.05, // No gap between categories
                   },
                 ]}
-                height={380}
+                height={355}
                 series={[
                   {
+                    data: [totals.pending, null, null, null],
+                    label: "Pending",
+                    color: theme.palette.chartBlue.main,
+                    stack: "total",
+                  },
+                  {
+                    data: [null, totals.rejected, null, null],
+                    label: "Rejected",
+                    color: theme.palette.chartPink.main,
+                    stack: "total",
+                  },
+                  {
+                    data: [null, null, totals.approved, null],
+                    label: "Approved",
+                    color: theme.palette.chartPurple.main,
+                    stack: "total",
+                  },
+                  {
                     data: [
-                      totals.pending,
-                      totals.rejected,
-                      totals.approved,
+                      null,
+                      null,
+                      null,
                       totals.pending + totals.rejected + totals.approved,
                     ],
-                    color: theme.palette.customPurple.main,
+                    label: "Total",
+                    color: theme.palette.chartYellow.main,
+                    stack: "total",
                   },
                 ]}
+                slotProps={{
+                  bar: {
+                    sx: {
+                      width: "100%", // Make each bar fill full category width
+                      rx: 4, // Rounded corners (optional)
+                    },
+                  },
+                }}
               />
             </Box>
           </Card>
@@ -445,7 +454,7 @@ export default function DashboardData() {
                   mt: 2,
                 }}
               >
-                Amount Details
+                Month Wise Details
               </Typography>
               <LineChart
                 height={300}
@@ -459,17 +468,17 @@ export default function DashboardData() {
                   {
                     data: monthWiseStats.map((item) => item.approved),
                     label: "Approved",
-                    color: theme.palette.customPurple.main,
+                    color: theme.palette.chartPurple.main,
                   },
                   {
                     data: monthWiseStats.map((item) => item.rejected),
                     label: "Rejected",
-                    color: theme.palette.customPink.main,
+                    color: theme.palette.chartPink.main,
                   },
                   {
                     data: monthWiseStats.map((item) => item.pending),
                     label: "Pending",
-                    color: theme.palette.customBlue.main,
+                    color: theme.palette.chartBlue.main,
                   },
                 ]}
               />

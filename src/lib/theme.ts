@@ -23,6 +23,10 @@ declare module "@mui/material/styles" {
     chipSuccess: Palette["primary"];
     chipWarning: Palette["primary"];
     chipInfo: Palette["primary"];
+    chartPink: Palette["primary"];
+    chartPurple: Palette["primary"];
+    chartBlue: Palette["primary"];
+    chartYellow: Palette["primary"];
   }
   interface PaletteOptions {
     customPink?: PaletteOptions["primary"];
@@ -33,6 +37,10 @@ declare module "@mui/material/styles" {
     chipSuccess?: PaletteOptions["primary"];
     chipWarning?: PaletteOptions["primary"];
     chipInfo?: PaletteOptions["primary"];
+    chartPink?: PaletteOptions["primary"];
+    chartPurple?: PaletteOptions["primary"];
+    chartBlue?: PaletteOptions["primary"];
+    chartYellow?: PaletteOptions["primary"];
   }
 }
 
@@ -78,6 +86,22 @@ export const theme = createTheme({
         },
         customYellow: {
           main: yellow[100],
+          contrastText: "#000000",
+        },
+        chartPink: {
+          main: pink[500],
+          contrastText: "#000000",
+        },
+        chartPurple: {
+          main: purple[500],
+          contrastText: "#000000",
+        },
+        chartBlue: {
+          main: blue[500],
+          contrastText: "#000000",
+        },
+        chartYellow: {
+          main: yellow[500],
           contrastText: "#000000",
         },
         chipError: {

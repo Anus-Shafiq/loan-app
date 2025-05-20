@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/lib/client";
+import useLoanRealtime from "../lib/useLoanRealtime";
 
 const UserContext = createContext();
 
@@ -14,6 +15,9 @@ export const UserProvider = ({ children }) => {
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  useLoanRealtime({ table: "loanDetails", setData: setLoanData });
+  useLoanRealtime({ table: "users", setData: setAllUsers });
 
   useEffect(() => {
     const checkAuth = async () => {

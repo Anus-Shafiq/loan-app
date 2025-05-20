@@ -18,6 +18,11 @@ import { theme } from "@/lib/theme";
 import LoanStepperForm from "./loanForm";
 import DashboardData from "../components/dashboarddata";
 import AllUserData from "./allUserTable";
+import { CopilotKit } from "@copilotkit/react-core";
+import { CopilotPopup } from "@copilotkit/react-ui";
+import CopilotDataBridge from "@/lib/copilotkitdata";
+
+import "@copilotkit/react-ui/styles.css";
 
 function DemoPageContent({ pathname }) {
   return (
@@ -76,6 +81,7 @@ DemoPageContent.propTypes = {
 
 function DashboardLayoutBranding(props) {
   const { user, loading, admin, loanData } = useUser();
+  const copilotApi = import.meta.env.VITE_COPILOTKIT_KEY;
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -123,27 +129,35 @@ function DashboardLayoutBranding(props) {
 
   return (
     // preview-start
-
-    <AppProvider
-      theme={theme}
-      navigation={NAVIGATION}
-      branding={{
-        logo: "",
-        title: "Swift Loan",
-        homeUrl: "/toolpad/core/introduction",
-      }}
-      router={router}
-      window={demoWindow}
-    >
-      <DashboardLayout
-        slots={{
-          toolbarAccount: () => null,
-          sidebarFooter: SidebarFooterAccount,
+    <CopilotKit publicApiKey={copilotApi}>
+      <AppProvider
+        theme={theme}
+        navigation={NAVIGATION}
+        branding={{
+          logo: "",
+          title: "Swift Loan",
+          homeUrl: "/toolpad/core/introduction",
         }}
+        router={router}
+        window={demoWindow}
       >
-        <DemoPageContent pathname={router.pathname} />
-      </DashboardLayout>
-    </AppProvider>
+        <DashboardLayout
+          slots={{
+            toolbarAccount: () => null,
+            sidebarFooter: SidebarFooterAccount,
+          }}
+        >
+          <DemoPageContent pathname={router.pathname} />
+          <CopilotDataBridge loanData={loanData} />
+          <CopilotPopup
+            labels={{
+              title: "Loan Assistant",
+              initial: "Hi! 👋 How can I assist you today?",
+            }}
+          />
+        </DashboardLayout>
+      </AppProvider>
+    </CopilotKit>
 
     // preview-end
   );

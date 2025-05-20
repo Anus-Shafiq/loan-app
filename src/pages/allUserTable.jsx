@@ -1,26 +1,14 @@
 import { useUser } from "@/context/store";
 import * as React from "react";
-import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
-import useLoanRealtime from "../lib/useLoanRealtime";
 import Table from "../components/table";
 import { supabase } from "@/lib/client";
 
 export default function AllUserData() {
   const { user, loading, admin, loanData, allUsers } = useUser();
-
-  const [UserData, setUserData] = useState([]);
-
-  useEffect(() => {
-    if (allUsers) {
-      setUserData(allUsers);
-    }
-  }, [allUsers]);
-
-  useLoanRealtime({ table: "users", setData: setUserData });
 
   const handleDelete = async (id) => {
     try {
@@ -82,7 +70,7 @@ export default function AllUserData() {
         </Typography>
       </Box>
 
-      <Table rowsData={UserData} columnsData={columns} loading={loading} />
+      <Table rowsData={allUsers} columnsData={columns} loading={loading} />
     </>
   );
 }
