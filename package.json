@@ -10,8 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@copilotkit/react-core": "^1.8.12",
-    "@copilotkit/react-ui": "^1.8.12",
+    "@copilotkit/react-core": "^1.8.13",
+    "@copilotkit/react-textarea": "^1.8.13",
+    "@copilotkit/react-ui": "^1.8.13",
+    "@copilotkit/runtime": "^1.8.13",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@hookform/resolvers": "^5.0.1",

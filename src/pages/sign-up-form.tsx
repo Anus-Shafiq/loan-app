@@ -78,7 +78,7 @@ export function SignUpForm({
       {success ? (
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">
+            <CardTitle className="text-2xl text-teal-600">
               Thank you for signing up!
             </CardTitle>
             <CardDescription>Check your email to confirm</CardDescription>
@@ -93,14 +93,16 @@ export function SignUpForm({
       ) : (
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Sign up</CardTitle>
+            <CardTitle className="text-2xl  text-teal-600">Sign up</CardTitle>
             <CardDescription>Create a new account</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSignUp}>
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email" className="text-teal-600">
+                    Email
+                  </Label>
                   <Input
                     id="email"
                     type="email"
@@ -112,7 +114,9 @@ export function SignUpForm({
                 </div>
                 <div className="grid gap-2">
                   <div className="flex items-center">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password" className="text-teal-600">
+                      Password
+                    </Label>
                   </div>
                   <Input
                     id="password"
@@ -124,7 +128,9 @@ export function SignUpForm({
                 </div>
                 <div className="grid gap-2">
                   <div className="flex items-center">
-                    <Label htmlFor="repeat-password">Repeat Password</Label>
+                    <Label htmlFor="repeat-password" className="text-teal-600">
+                      Repeat Password
+                    </Label>
                   </div>
                   <Input
                     id="repeat-password"
@@ -135,11 +141,15 @@ export function SignUpForm({
                   />
                 </div>
                 {error && <p className="text-sm text-red-500">{error}</p>}
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button
+                  type="submit"
+                  className="w-full bg-teal-600 hover:bg-teal-700"
+                  disabled={isLoading}
+                >
                   {isLoading ? "Creating an account..." : "Sign up"}
                 </Button>
               </div>
-              <div className="mt-4 text-center text-sm">
+              <div className="mt-4 text-center text-sm text-teal-600">
                 Already have an account?{" "}
                 <Link to="/login" className="underline underline-offset-4">
                   Login

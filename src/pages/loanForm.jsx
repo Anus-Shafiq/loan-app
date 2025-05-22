@@ -164,15 +164,12 @@ const FormContext = React.createContext();
 
 export default function LoanApplicationStepper() {
   const { user } = useUser();
-  console.log(user);
+
   const methods = useForm({
     mode: "onTouched",
   });
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState({});
-  useEffect(() => {
-    console.log(formData);
-  }, [formData]);
 
   async function addData(formData) {
     try {
@@ -202,7 +199,6 @@ export default function LoanApplicationStepper() {
         })
         .catch((error) => {
           console.error("Error submitting form:", error);
-          alert("There was an issue submitting your loan request.");
         });
     } else {
       setFormData(updatedFormData);
@@ -220,6 +216,10 @@ export default function LoanApplicationStepper() {
     setFormData({});
   };
 
+  const handleRedirect = () => {
+    navigate("/My-Loan-Requests");
+  };
+
   const onSubmit = methods.handleSubmit(onNext);
 
   return (
@@ -234,7 +234,7 @@ export default function LoanApplicationStepper() {
             padding: 2,
           }}
         >
-          <Stepper activeStep={activeStep}>
+          <Stepper activeStep={activeStep} alternativeLabel>
             {steps.map((label) => (
               <Step key={label}>
                 <StepLabel>{label}</StepLabel>
@@ -250,6 +250,13 @@ export default function LoanApplicationStepper() {
                 </Typography>
 
                 <Box sx={{ display: "flex", justifyContent: "center", pt: 2 }}>
+                  <Button
+                    onClick={handleRedirect}
+                    variant="contained"
+                    sx={{ mr: 2 }}
+                  >
+                    Go to Request Table
+                  </Button>
                   <Button
                     onClick={handleReset}
                     variant="contained"
