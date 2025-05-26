@@ -42,9 +42,11 @@ export function UpdatePasswordForm({
       className={cn("flex flex-col gap-6 w-[350px] mx-auto", className)}
       {...props}
     >
-      <Card>
+      <Card className="border border-teal-700 shadow-lg">
         <CardHeader>
-          <CardTitle className="text-2xl">Reset Your Password</CardTitle>
+          <CardTitle className="text-2xl text-teal-600">
+            Reset Your Password
+          </CardTitle>
           <CardDescription>
             Please enter your new password below.
           </CardDescription>
@@ -53,7 +55,9 @@ export function UpdatePasswordForm({
           <form onSubmit={handleForgotPassword}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
-                <Label htmlFor="password">New password</Label>
+                <Label htmlFor="password" className="text-teal-600">
+                  New password
+                </Label>
                 <Input
                   id="password"
                   type="password"
@@ -64,7 +68,11 @@ export function UpdatePasswordForm({
                 />
               </div>
               {error && <p className="text-sm text-red-500">{error}</p>}
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button
+                type="submit"
+                className="w-full bg-teal-600 hover:bg-teal-700"
+                disabled={isLoading}
+              >
                 {isLoading ? "Saving..." : "Save new password"}
               </Button>
             </div>

@@ -76,7 +76,7 @@ export function SignUpForm({
       {...props}
     >
       {success ? (
-        <Card>
+        <Card className="border border-teal-700 shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl text-teal-600">
               Thank you for signing up!
@@ -91,7 +91,7 @@ export function SignUpForm({
           </CardContent>
         </Card>
       ) : (
-        <Card>
+        <Card className="border border-teal-700 shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl  text-teal-600">Sign up</CardTitle>
             <CardDescription>Create a new account</CardDescription>

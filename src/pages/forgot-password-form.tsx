@@ -47,7 +47,7 @@ export function ForgotPasswordForm({
       {...props}
     >
       {success ? (
-        <Card>
+        <Card className="border border-teal-700 shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl text-teal-600">
               Check Your Email
@@ -62,7 +62,7 @@ export function ForgotPasswordForm({
           </CardContent>
         </Card>
       ) : (
-        <Card>
+        <Card className="border border-teal-700 shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl text-teal-600">
               Reset Your Password
