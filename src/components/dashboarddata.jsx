@@ -1,6 +1,5 @@
 import { useUser } from "@/context/store";
 import { useEffect, useState, useMemo } from "react";
-
 import { Grid, Box, Typography, Card } from "@mui/material";
 import { LineChart } from "@mui/x-charts/LineChart";
 import CardSection from "./card";
@@ -29,7 +28,7 @@ export default function DashboardData() {
   const [total, setTotal] = useState(0);
 
   const [statusCounts, setStatusCounts] = useState({});
-  const { user, loading, admin, loanData } = useUser();
+  const { user, loading, admin, loanData, authLoading } = useUser();
   const [monthWiseStats, setMonthWiseStats] = useState([]);
   const theme = useTheme();
 
@@ -124,7 +123,7 @@ export default function DashboardData() {
     });
   }
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <Box
         sx={{

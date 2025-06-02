@@ -9,6 +9,7 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [authUser, setAuthUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(true);
   const [loanData, setLoanData] = useState([]);
   const [admin, setAdmin] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
@@ -28,7 +29,7 @@ export const UserProvider = ({ children }) => {
         if (!publicRoutes.includes(location.pathname)) {
           navigate("/login");
         }
-        setLoading(false);
+        setAuthLoading(false);
         return;
       }
 
@@ -38,7 +39,7 @@ export const UserProvider = ({ children }) => {
         navigate("/dashboard");
       }
 
-      setLoading(false);
+      setAuthLoading(false);
     };
 
     checkAuth();
@@ -114,9 +115,27 @@ export const UserProvider = ({ children }) => {
     fetchUserData();
   }, [authUser]);
 
+  const logout = async () => {
+    await supabase.auth.signOut();
+    navigate("/login");
+
+    setLoading(true);
+    setAuthLoading(true);
+  };
+
   return (
     <UserContext.Provider
-      value={{ user, authUser, loading, setUser, loanData, admin, allUsers }}
+      value={{
+        user,
+        authUser,
+        loading,
+        setUser,
+        loanData,
+        admin,
+        allUsers,
+        logout,
+        authLoading,
+      }}
     >
       {children}
     </UserContext.Provider>

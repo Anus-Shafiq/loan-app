@@ -12,7 +12,6 @@ import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { Button } from "@mui/material";
 import DataTable from "./loanTable";
-import { supabase } from "@/lib/client";
 import { useNavigate, useLocation } from "react-router-dom";
 import { theme } from "@/lib/theme";
 import LoanStepperForm from "./loanForm";
@@ -42,7 +41,6 @@ function DemoPageContent({ pathname }) {
       ) : pathname === "/dashboard" ? (
         <DashboardData />
       ) : pathname === "/users" ? (
-        // <Typography>Dashboard content for {pathname}</Typography>
         <AllUserData />
       ) : (
         <Typography>Dashboard content for {pathname}</Typography>
@@ -53,19 +51,11 @@ function DemoPageContent({ pathname }) {
 
 const SidebarFooterAccount = () => {
   const navigate = useNavigate();
+  const { logout } = useUser();
 
-  const handleLogout = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      navigate("/login");
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
-  };
   return (
     <Button
-      onClick={handleLogout}
+      onClick={logout}
       variant="text"
       size="large"
       endIcon={<LogoutIcon />}
